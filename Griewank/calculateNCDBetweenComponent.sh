@@ -1,5 +1,5 @@
 #!/bin/bash
-# Calculates the NCD between the problems
+# Calculates the NCD between the Griewank component problems
 # Assumptions:
 #           - 2 compressors are used: 7zip and FPC
 # Returns:
@@ -21,24 +21,20 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-b=(0.5 0.6 0.7 0.8 0.9 1 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2 2.1 2.2 2.3 2.4 2.5 2.6 2.7 2.8 2.9 3 3.1 3.2 3.3 3.4 3.5 3.6 3.7 3.8 3.9 4 4.1 4.2 4.3 4.4 4.5 4.6 4.7 4.8 4.9 5 5.1 5.2 5.3 5.4 5.5 5.6 5.7 5.8 5.9 6 6.1 6.2 6.3 6.4 6.5)
-
-PATH=~/path_to_your_files # Insert the path to where this is saved
-
-trial=10
-dirBase=PATH/ATSP/
-compressorLZMA=PATH/7z.exe
-compressorFPC=PATH/fpc.exe
-dirData=${dirBase}data/trial${trial}/
-
+d=(1 2 3 4 5 6 7 8 9 10 11 12 13 14 15)
 precision=10000000000
 fpcRate=26
 
+dirBase=PATH/Griewank/
+compressorLZMA=PATH/7z.exe
+compressorFPC=PATH/fpc.exe
+dirData=${dirBase}data/
+
 cd ${dirData}
 
-for (( i = 0; i < ${#b[@]}; i++ ))
+for (( i = 0; i < ${#d[@]}; i++ ))
 do
-	p1=b${b[${i}]}
+	p1=c${d[${i}]}
 	
 	# LZMA
 	t1=$(($(date +%s%N)))
@@ -52,10 +48,10 @@ do
 	t2=$(($(date +%s%N)))
 	fpc1Time=$((${t2}-${t1}))
 	
-	for (( j = $i; j < ${#b[@]}; j++ ))
+	for (( j = $i; j < ${#d[@]}; j++ ))
 	do		
-		p2=b${b[${j}]}
-		p12=b${b[${i}]}_b${b[${j}]}
+		p2=c${d[${j}]}
+		p12=c${d[${i}]}_c${d[${j}]}
 		
 		# LZMA
 		t1=$(($(date +%s%N)))
@@ -94,10 +90,10 @@ do
 			maxSize=${tempSize}
 		fi
 		ncd=$(((${bothSize} - ${minSize})*${precision} / ${maxSize}))
-		str="${p1} ${p2} ${ncd} ${lzmaTime}"
+		str="${p1} ${p2} 0.${ncd} ${lzmaTime}"
 		echo "LZMA: $str"
 		# Write data in file
-		echo $str >> results_lzma.dat
+		echo $str >> results_lzma_sphere_component.dat
 		
 		# Perform NCD on FPC
 		minSize=$(stat -c%s "${p1}.fpc")
@@ -109,21 +105,17 @@ do
 			maxSize=${tempSize}
 		fi
 		ncd=$(((${bothSize} - ${minSize})*${precision} / ${maxSize}))
-		str="${p1} ${p2} ${ncd} ${fpcTime}"
+		str="${p1} ${p2} 0.${ncd} ${fpcTime}"
 		echo "FPC: $str"
 		# Write data in file
-		echo $str >> results_fpc.dat
-				
+		echo $str >> results_fpc_sphere_component.dat
+		
 		# Remove compressed files
-		if [ $i -ne $j ]; then
-			rm ${p2}.7z ${p2}.fpc
-		fi
-		rm ${p12}.7z ${p12}.fpc
+		rm ${p2}.7z ${p12}.7z ${p2}.fpc ${p12}.fpc
 	done
 	# Remove compressed files
 	rm ${p1}.7z ${p1}.fpc
 done
 
 # Clean data file
-sed -i 's/bin//g' *.dat
-sed -i 's/b//g' *.dat
+sed -i 's/c/0./g' *.dat

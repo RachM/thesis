@@ -1,3 +1,4 @@
+#!/bin/bash
 # Calculates the NCD between the problems
 # Assumptions:
 #           - 2 compressors are used: 7zip and FPC

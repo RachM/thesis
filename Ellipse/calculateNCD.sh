@@ -1,3 +1,4 @@
+#!/bin/bash
 # Calculates the NCD between the problems
 # Assumptions:
 #           - 2 compressors are used: 7zip and FPC
@@ -49,7 +50,7 @@ do
 	t2=$(($(date +%s%N)))
 	fpc1Time=$((${t2}-${t1}))
 	
-	for (( j = $i; j < $i+1; j++ ))
+	for (( j = $i; j < ${#e[@]}; j++ ))
 	do
 		p2=e${e[${j}]}
 		p12=e${e[${i}]}_e${e[${j}]}
