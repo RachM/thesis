@@ -17,17 +17,14 @@
 addpath(genpath('../COMMON'));
 clear all;
 clc;
-k = 0.4:0.025:1.3;
-totalProblems = length(k);
-trials = 1:10;
 
-distances = zeros(length(trials), totalProblems, totalProblems);
-for t=1:length(trials)
-    dataKL = load(['data/trial', num2str(trials(t)), '/densities.mat']);
-    distances(t, :, :) = dataKL.kl' + dataKL.kl; % J Divergence
-end
-distances = reshape(mean(distances,1), totalProblems, totalProblems);
-save('distances_kl.mat', 'distances');
+% Settings
+ell = 1:0.25:10;
+totalProblems = length(ell);
+dirName = 'data';
+
+load('densities.mat');
+distances = kl + kl';
 
 % t-SNE
 dimension = 2;
@@ -40,11 +37,10 @@ p = d2p((distances / range(distances(:))).^2, perplexity, epsilon);
 % Dendrogram
 z = linkage(squareform(distances), 'average');
 f1 = figure;
-[handles, groups] = dendrogram(z, totalProblems);
+[handles, groups] = dendrogram(z, totalProblems, 'Reorder', 1:totalProblems);
 close(f1);
-
 mSize = 10;
-fontSize = 18;
+fontSize = 16;
 figure;
 hold on;
 set(gca, 'FontSize', 14);
@@ -53,15 +49,17 @@ for i=1:totalProblems
 	plot(points(i, 1), points(i, 2), 'o', 'MarkerSize', mSize,...
         'MarkerFaceColor', [1 - (i - 1), 1 - (i - 1), 1 - (i - 1)] ./ totalProblems,...
         'MarkerEdgeColor', 'k');
-    text(points(i, 1), points(i, 2), ['  ', num2str(k(i))]);
-    labels{i} = num2str(k(i));
+    text(points(i, 1), points(i, 2), ['  ', num2str(ell(i))]);
+    labels{i} = num2str(ell(i));
 end
-dendrogram(z, totalProblems, 'labels', labels);
+
+% Dendrogram
+dendrogram(z, totalProblems, 'labels', labels, 'Reorder', 1:totalProblems);
 set(gca, 'XTickLabel', labels)
-xlabel('k', 'FontSize', fontSize)
-ylabel('D_J', 'FontSize', fontSize);
+xlabel('a', 'FontSize', fontSize)
+ylabel('NCD', 'FontSize', fontSize);
 set(gca, 'FontSize', 14);
 
 % Heatmap
-plotHeatmap(distances, 'k', k);
+plotHeatmap(distances, 'a', ell);
 set(gca, 'FontSize', 14);

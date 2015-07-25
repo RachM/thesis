@@ -31,7 +31,7 @@ for i=1:length(circles)
     nSamples = nSamplesBase * (circles(i) * dim);
     RandStream.setDefaultStream(RandStream('mt19937ar','seed', seed + circles(i))); % So we can reproduce
     initPoint = rand(1, dim * circles(i)) * range(bounds) + bounds(1);
-    x = random_levy_walk(initPoint, nSamples, precision, bounds);
+    x = randomLevyWalk(initPoint, nSamples, precision, bounds);
     f = zeros(nSamples, 1);
     inds = randperm(nSamples);
     x = x(inds, :);

@@ -22,30 +22,33 @@ clc;
 clear all;
 
 % Settings
-circles = 2:30;
-totalProblems = length(circles);
+ell = 1:0.25:10;
+totalProblems = length(ell);
 dirName = 'data/';
-% type = 'fpc';
-type = 'lzma';
+type = 'fpc';
+% type = 'lzma';
 
 data = load([dirName, 'results_', type, '.dat']);
 distances = zeros(totalProblems);
 timing = zeros(totalProblems);
 
-for i=1:length(circles)
-    for j=i:length(circles)
-        ind = (data(:,1) == (circles(i))) & (data(:,2) == (circles(j)));
+for i=1:length(ell)
+    for j=i:length(ell)
+        ind = (data(:,1) == (ell(i))) & (data(:,2) == (ell(j)));
         [temp ind] = max(ind);
         if (temp ~= 0)
             distances(i, j) = data(ind, 3);
             distances(j, i) = data(ind, 3);
             timing(i, j) = data(ind, 4) / (10^9);
-            timing(j, i) = data(ind ,4) / (10^9);
+            timing(j, i) = data(ind, 4) / (10^9);
         end
     end
 end
 save(['distances_', type, '.mat'], 'distances');
 save(['timing_', type, '.mat'], 'timing');
+
+load('densities.mat');
+distances = kl + kl';
 
 minD = min(distances(:));
 ran = 1 - minD;
@@ -75,30 +78,33 @@ distances(ind) = 0;
 dimension = 2;
 epsilon = 1e-5;
 [perplexity, cost] = calculatePerplexity(distances, 1000, 1:0.5:50, epsilon);
-% perplexity = 4;
+% perplexity = 5;
 p = d2p(distances.^2, perplexity, epsilon);
 [points cost] = tsne_p(p, [], dimension);
 
 mSize = 10;
 textSize = 12;
-fontSize = 16;
+fontSize = 18;
 figure;
+set(gca, 'FontSize', 14);
 hold on;
 labels = cell(1, totalProblems);
 for i=1:totalProblems
-	plot(points(i,1), points(i,2), 'o', 'MarkerSize', mSize,...
+	plot(points(i, 1), points(i, 2), 'o', 'MarkerSize', mSize,...
         'MarkerFaceColor', [1 - (i - 1), 1 - (i - 1), 1 - (i - 1)] ./ totalProblems,...
         'MarkerEdgeColor', 'k');
-    labels{i} = num2str(circles(i));
-    text(points(i,1), points(i,2), ['  ',num2str(circles(i))], 'FontSize', textSize);
+    labels{i} = num2str(ell(i));
+    text(points(i, 1), points(i, 2), ['  ', num2str(ell(i))], 'FontSize', textSize);
 end
 
 % Dendrogram
-z = linkage(squareform(distances),'average');
+z = linkage(squareform(distances), 'average');
 figure;
-[handles, groups] = dendrogram(z,totalProblems,'labels',labels,'Reorder',1:totalProblems);
-xlabel('Circles', 'FontSize', fontSize)
+[handles, groups] = dendrogram(z, totalProblems, 'labels', labels,'Reorder', 1:totalProblems);
+xlabel('Eccentricity', 'FontSize', fontSize)
 ylabel('NCD', 'FontSize', fontSize);
+set(gca, 'FontSize', 14);
 
 % Heatmap
-plotHeatmap(distances, 'Circles', circles);
+plotHeatmap(distances, 'Eccentricity', ell);
+set(gca, 'FontSize', 14);

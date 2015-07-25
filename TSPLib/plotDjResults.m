@@ -36,7 +36,7 @@ distances = kl + kl';
 % t-SNE
 dimension = 2;
 epsilon = 1e-5;
-[perplexity, cost] = calculatePerplexity(distancesMean, 1000, 1:0.5:50, epsilon);
+[perplexity, cost] = calculatePerplexity(distances, 1000, 1:0.5:50, epsilon);
 % perplexity = 5;
 p = d2p((distances / range(distances(:))).^2, perplexity, epsilon);
 [points cost] = tsne_p(p, [], dimension);
