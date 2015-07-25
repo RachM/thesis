@@ -27,6 +27,7 @@ PATH=~/path_to_your_files # Insert the path to where this is saved
 dirBase=PATH/NumberPartitioning/
 compressorLZMA=PATH/7z.exe
 compressorFPC=PATH/fpc.exe
+dirData=${dirBase}data/
 
 precision=10000000000
 fpcRate=26

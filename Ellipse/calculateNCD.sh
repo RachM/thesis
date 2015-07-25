@@ -25,10 +25,10 @@ e=(1 1.25 1.5 1.75 2 2.25 2.5 2.75 3 3.25 3.5 3.75 4 4.25 4.5 4.75 5 5.25 5.5 5.
 
 PATH=~/path_to_your_files # Insert the path to where this is saved
 
-dirBase=PATH/ATSP/
+dirBase=PATH/Ellipse/
 compressorLZMA=PATH/7z.exe
 compressorFPC=PATH/fpc.exe
-dirData=${dirBase}data/trial${trial}/
+dirData=${dirBase}data/
 precision=10000000000
 
 cd ${dirData}

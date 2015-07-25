@@ -1,5 +1,5 @@
 #!/bin/bash
-# Calculates the NCD between the Griewank and the component problems
+# Calculates the NCD between the problems
 # Assumptions:
 #           - 2 compressors are used: 7zip and FPC
 # Returns:
@@ -21,20 +21,21 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-d=(1 2 3 4 5 6 7 8 9 10 11 12 13 14 15)
+a=(0 0.25 0.5 0.75 1 1.25 1.5 1.75 2 2.25 2.5 2.75 3 3.25 3.5 3.75 4 4.25 4.5 4.75 5 5.25 5.5 5.75 6 6.25 6.5 6.75 7 7.25 7.5 7.75 8 8.25 8.5 8.75 9 9.25 9.5 9.75 10)
+dim=1
 precision=10000000000
 fpcRate=26
 
-dirBase=PATH/Griewank/
+dirBase=PATH/Rastrigin/
 compressorLZMA=PATH/7z.exe
 compressorFPC=PATH/fpc.exe
-dirData=${dirBase}data/
+dirData=${dirBase}data_${dim}D/
 
 cd ${dirData}
 
-for (( i = 0; i < ${#d[@]}; i++ ))
+for (( i = 0; i < ${#a[@]}; i++ ))
 do
-	p1=d${d[${i}]}
+	p1=a${a[${i}]}
 	
 	# LZMA
 	t1=$(($(date +%s%N)))
@@ -48,10 +49,10 @@ do
 	t2=$(($(date +%s%N)))
 	fpc1Time=$((${t2}-${t1}))
 	
-	for (( j = $i; j < ${#d[@]}; j++ ))
+	for (( j = $i; j < ${#a[@]}; j++ ))
 	do		
-		p2=c${d[${j}]}
-		p12=d${d[${i}]}_c${d[${j}]}
+		p2=a${a[${j}]}
+		p12=a${a[${i}]}_a${a[${j}]}
 		
 		# LZMA
 		t1=$(($(date +%s%N)))
@@ -73,7 +74,7 @@ do
 
 		# FPC
 		t1=$(($(date +%s%N)))
-		$(${compressorFPC} ${fpcRate} ${p12}.bin ${p12}.fpc)
+		${compressorFPC} ${fpcRate} ${p12}.bin ${p12}.fpc > /dev/null
 		t2=$(($(date +%s%N)))
 		fpc12Time=$((${t2}-${t1}))
 		
@@ -93,7 +94,8 @@ do
 		str="${p1} ${p2} 0.${ncd} ${lzmaTime}"
 		echo "LZMA: $str"
 		# Write data in file
-		echo $str >> results_lzma_both.dat
+		# Write data in file
+		echo $str >> results_lzma.dat
 		
 		# Perform NCD on FPC
 		minSize=$(stat -c%s "${p1}.fpc")
@@ -108,7 +110,7 @@ do
 		str="${p1} ${p2} 0.${ncd} ${fpcTime}"
 		echo "FPC: $str"
 		# Write data in file
-		echo $str >> results_fpc_both.dat
+		echo $str >> results_fpc.dat
 		
 		# Remove compressed files
 		rm ${p2}.7z ${p12}.7z ${p2}.fpc ${p12}.fpc
@@ -118,7 +120,4 @@ do
 done
 
 # Clean data file
-sed -i 's/c10/0.10/g' *.dat
-sed -i 's/c1/0.01/g' *.dat
-sed -i 's/c/0./g' *.dat
-sed -i 's/d//g' *.dat
+sed -i 's/a//g' *.dat
