@@ -18,42 +18,29 @@
 % You should have received a copy of the GNU General Public License
 % along with this program.  If not, see <http://www.gnu.org/licenses/>.
 addpath(genpath('../COMMON'));
-clear all;
 clc;
+clear all;
 
+% Settings
+circles = 2:30;
+totalProblems = length(circles);
 dirName = 'data/';
-precision = 10000000000;
-fileNames = {...
-    'Symmetric_kroA100','Symmetric_kroB100','Symmetric_kroC100','Symmetric_kroD100',...
-    'Symmetric_kroE100','Symmetric_bayg29','Symmetric_bays29','Symmetric_gr17', 'Symmetric_gr21',...
-    'Symmetric_gr24', 'Symmetric_gr48', 'Symmetric_ulysses16', 'Symmetric_ulysses22', ...
-    ...
-    'Asymmetric_br17','Asymmetric_ft53','Asymmetric_ft70','Asymmetric_ftv33','Asymmetric_ftv35',...
-    'Asymmetric_ftv38', 'Asymmetric_ftv44', 'Asymmetric_ftv47', 'Asymmetric_ftv55', 'Asymmetric_ftv64', ...
-    'Asymmetric_p43', 'Asymmetric_ry48p', 'Asymmetric_kro124p'};
+% type = 'fpc';
+type = 'lzma';
 
-totalProblems = length(fileNames);
-% type = 'lzma';
-type = 'fpc';
-
-results = load([dirName,'results_',type,'.mat']);
-data = results.data;
+data = load([dirName,'results_',type,'.dat']);
 distances = zeros(totalProblems);
 timing = zeros(totalProblems);
 
-data(:,1) = data(:,1) / precision;
-data(:,2) = data(:,2) / (10^9);
-data(data(:,1) < 0, 1) = 0;
-data(data(:,1) > 1, 1) = 1;
-for i=1:length(fileNames)
-    for j=i:length(fileNames)
-        ind = (ismember(results.textdata(:,1),fileNames{i}) & (ismember(results.textdata(:,2),fileNames{j})));
+for i=1:length(circles)
+    for j=i:length(circles)
+        ind = (data(:,1)==(circles(i))) & (data(:,2)==(circles(j)));
         [temp ind] = max(ind);
         if (temp ~= 0)
-            distances(i,j) = data(ind,1);
-            distances(j,i) = data(ind,1);
-            timing(i,j) = data(ind,2);
-            timing(j,i) = data(ind,2);
+            distances(i,j) = data(ind,3);
+            distances(j,i) = data(ind,3);
+            timing(i,j) = data(ind,4)/(10^9);
+            timing(j,i) = data(ind,4)/(10^9);
         end
     end
 end
@@ -68,9 +55,9 @@ ind = logical(ind);
 distances(ind) = 0;
 
 % If you want to try MDS, uncomment the below
-% opts = statset('MaxIter', 5000);
+% opts = statset('MaxIter',10000);
 % [points stress2 disparities] = mdscale(distances,2,'Criterion','sstress','Options',opts); % Non-metric MDS
-% [points stress disparities] = mdscale(distances,2,'Criterion','metricstress','Options',opts); % Metric MDS
+% [points stress disparities] = mdscale(distances,2,'Criterion','metricsstress','Options',opts); % Metric MDS
 % [points stress disparities] = mdscale(distances,2,'Criterion','strain','Options',opts); % Metric MDS equivalent to classical
 % [points eigen] = cmdscale(distances); % Classical MDS
 % pd = pdist(points);
@@ -88,8 +75,8 @@ distances(ind) = 0;
 dimension = 2;
 epsilon = 1e-5;
 [perplexity, cost] = calculatePerplexity(distances, 1000, 1:0.5:50, epsilon);
-% perplexity = 10;
-p = d2p(distances.^2, perplexity, epsilon);
+% perplexity = 4;
+p = d2p(distances.^2, perplexity, 1e-5);
 [points cost] = tsne_p(p, [], dimension);
 
 mSize = 10;
@@ -98,42 +85,20 @@ fontSize = 16;
 figure;
 hold on;
 labels = cell(1,totalProblems);
-plot(points(1,1), points(1,2), 'ok','MarkerSize',mSize,...
-        'MarkerFaceColor','k',...
-        'MarkerEdgeColor','k');
-plot(points(totalProblems,1), points(totalProblems,2), 'sw','MarkerSize',mSize,...
-        'MarkerFaceColor','w',...
-        'MarkerEdgeColor','k');
-legend('Symmetric','Asymmetric');
-
 for i=1:totalProblems
-    label = fileNames{i};
-    ind = strfind(label, '_');    
-    labels{i} = label(ind+1:length(label));
-    
-    text(points(i,1), points(i,2), ['  ',labels{i}],'FontSize',12);
-    
-    shape = 'o';
-    color = 'k';
-    if (strcmp(label(1:ind-1),'Asymmetric'))
-        shape = 's';
-        color = 'w';
-    end
-	plot(points(i,1), points(i,2), shape,'MarkerSize',mSize,...
-        'MarkerFaceColor',color,...
+	plot(points(i,1), points(i,2), 'o','MarkerSize',mSize,...
+        'MarkerFaceColor',[1-(i-1)/totalProblems,1-(i-1)/totalProblems,1-(i-1)/totalProblems],...
         'MarkerEdgeColor','k');
+    labels{i} = num2str(circles(i));
+    text(points(i,1), points(i,2), ['  ',num2str(circles(i))], 'FontSize', textSize);
 end
 
 % Dendrogram
 z = linkage(squareform(distances),'average');
 figure;
-[handles, groups] = dendrogram(z,'labels',labels,'orientation','right');
-xlabel('TSP Instance', 'FontSize', fontSize);
+[handles, groups] = dendrogram(z,totalProblems,'labels',labels,'Reorder',1:totalProblems);
+xlabel('Circles', 'FontSize', fontSize)
 ylabel('NCD', 'FontSize', fontSize);
 
 % Heatmap
-plotHeatmap(distances, 'TSP Instance');
-set(gca,'XTick',1:totalProblems)
-set(gca,'XTickLabel',cell(1,totalProblems))
-set(gca,'YTick',1:totalProblems)
-set(gca,'YTickLabel',labels)
+plotHeatmap(distances, 'Circles', circles);
