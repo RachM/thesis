@@ -6,10 +6,10 @@ Source for calculating the length scales, Dj and NCD between ATSP instances. Als
 To use:
 
 calculateDistributionsAndKL.m:
-  - Script for calculating the length scale distributions and KL divergence.
+  - Script for calculating the length scale distributions and KL divergence
 
 calculateNCD.sh:
-  - Shell script for calculating the NCD between instances.
+  - Shell script for calculating the NCD between instances
   - Assumes:
     - saveAtspAsBinary has been run
     - suitable compressors are on the file system

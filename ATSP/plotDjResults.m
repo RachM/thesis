@@ -50,7 +50,6 @@ distancesMean(ind) = 0;
 % t-SNE
 dimension = 2;
 epsilon = 1e-5;
-
 [perplexity, cost] = calculatePerplexity(distancesMean, 1000, 1:0.5:50, epsilon);
 p = d2p((distancesMean / range(distancesMean(:))).^2, perplexity, epsilon);
 [points cost] = tsne_p(p, [], dimension);

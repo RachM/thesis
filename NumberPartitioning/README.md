@@ -11,7 +11,7 @@ calculateDistributionsAndKL.m:
 calculateNCD.sh:
   - Shell script for calculating the NCD between instances
   - Assumes:
-    - saveAtspAsBinary has been run
+    - saveAsBinary has been run
     - suitable compressors are on the file system
 
 compareDjToNCD.m:

@@ -80,13 +80,12 @@ distances(ind) = 0;
 % t-SNE
 dimension = 2;
 epsilon = 1e-5;
-[perplexity, cost] = calculatePerplexity(distancesMean, 1000, 1:0.5:50, epsilon);
-p = d2p(distancesMean.^2, perplexity, epsilon);
+[perplexity, cost] = calculatePerplexity(distances, 1000, 1:0.5:50, epsilon);
+% perplexity = 4;
+p = d2p(distances.^2, perplexity, epsilon);
 [points cost] = tsne_p(p, [], dimension);
 
-% perplexity = 4;
-
-% % Dendrogram
+% Dendrogram
 z = linkage(squareform(distances), 'average');
 f1 = figure;
 [handles, groups] = dendrogram(z, totalProblems, 'Reorder', 1:totalProblems);
@@ -115,5 +114,5 @@ set(gca, 'XTickLabel', labels)
 xlabel('k', 'FontSize', fontSize)
 ylabel('NCD', 'FontSize', fontSize);
 
-% % Heatmap
+% Heatmap
 plotHeatmap(distances, 'k', k);
