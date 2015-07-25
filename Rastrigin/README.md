@@ -14,7 +14,7 @@ calculateLengthScalesAndSaveAsBinary.m:
 calculateNCD.sh:
   - Shell script for calculating the NCD between instances
   - Assumes:
-    - saveAsBinary has been run
+    - calculateLengthScalesAndSaveAsBinary has been run
     - suitable compressors are on the file system
 
 compareDjToNCD.m:
