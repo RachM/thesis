@@ -24,7 +24,7 @@ function [ perplexity, cost ] = calculatePerplexity(distances, numIterations, pe
 % 
 % You should have received a copy of the GNU General Public License
 % along with this program.  If not, see <http://www.gnu.org/licenses/>.
-addpath(genpath('COMMON'));
+addpath(genpath('../COMMON'));
 costs = zeros(length(perplexities), numIterations);
 
 for i=1:numIterations
