@@ -1,4 +1,4 @@
-% Script for calculating the KL divergence.
+% Script for calculating the length scale distributions and KL divergence.
 % Assumptions:
 %       - Data is in 'data/trialX' directory, where X is the trial number
 %       - COMMON directory is local

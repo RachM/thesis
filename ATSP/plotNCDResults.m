@@ -74,6 +74,16 @@ distancesMean(ind) = 0;
 % [points stress disparities] = mdscale(distancesMean,2,'Criterion','metricstress','Options',opts); % Metric MDS
 % [points stress disparities] = mdscale(distancesMean,2,'Criterion','strain','Options',opts); % Metric MDS equivalent to classical
 % [points eigen] = cmdscale(distancesMean); % Classical MDS
+% pd = pdist(points);
+% dissimilarities = squareform(distances);
+% disparities = squareform(disparities);
+% [dum,ord] = sortrows([disparities(:) dissimilarities(:)]);
+% plot(dissimilarities,pd,'bo', ...
+%      dissimilarities(ord),disparities(ord),'r.-')
+% xlabel('NCD')
+% ylabel('Plot Distances / Disparities')
+% legend({'Plot Distances' 'Disparities'},...
+%        'Location','NorthWest');
 
 % t-SNE
 dimension = 2;

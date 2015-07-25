@@ -7,6 +7,9 @@ To use:
 
 benchmarks.m:
   - BBOB functions taken from http://coco.gforge.inria.fr/doku.php?id=start
+  
+calculatePerplexity.m:
+  - Calculates the optimal perplexity (used in t-SNE) via an exhaustive search.
 
 dispersion.m:
   - Calculates the dispersion of a given sample.

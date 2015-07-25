@@ -1,7 +1,6 @@
 % Saves the ATSP length scales as binary files in order to perform NCD
 % Assumptions:
 %       - Data is in 'data/trialX' directory, where X is the trial number
-%       - COMMON directory is local
 % 
 % Copyright (C) 2015 Rachael Morgan (rachael.morgan8@gmail.com)
 % 

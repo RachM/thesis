@@ -102,5 +102,5 @@ ylabel('log_{10}D_J', 'FontSize', fontSize);
 set(gca, 'FontSize', 14);
 
 % Heatmap
-plot_heatmap(distancesMean, 'b', b);
+plotHeatmap(distancesMean, 'b', b);
 set(gca, 'FontSize', 14);
