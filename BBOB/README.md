@@ -1,7 +1,7 @@
-Ellipse
+BBOB
 ====
 
-Source for calculating the length scales, Dj and NCD between Elliptical function instances. Also compares the NCD results to the J-divergence results. Used in the experiments in Sections 7.1.1, 8.3.1 and 8.4.2 of [1].
+Source for calculating the length scales, Dj and NCD between BBOB function instances. Also compares the NCD results to the J-divergence results. Used in the experiments in Sections 7.2, 8.3.4 and 8.4.2 of [1].
 
 To use:
 
